@@ -415,6 +415,151 @@ class LocalWordGenerator {
                 { phrase: "adjust to", chinese: "適應" },
                 { phrase: "adjust the schedule", chinese: "調整時程" },
                 { phrase: "price adjustment", chinese: "價格調整" }
+            ],
+            'advance': [
+                { phrase: "in advance", chinese: "提前" },
+                { phrase: "advance payment", chinese: "預付款" },
+                { phrase: "career advancement", chinese: "職業晉升" }
+            ],
+            'advantage': [
+                { phrase: "competitive advantage", chinese: "競爭優勢" },
+                { phrase: "take advantage of", chinese: "利用" },
+                { phrase: "mutual advantage", chinese: "互利" }
+            ],
+            'advertise': [
+                { phrase: "advertise online", chinese: "線上廣告" },
+                { phrase: "advertise a position", chinese: "招聘廣告" },
+                { phrase: "advertise products", chinese: "產品廣告" }
+            ],
+            'advise': [
+                { phrase: "advise against", chinese: "建議不要" },
+                { phrase: "strongly advise", chinese: "強烈建議" },
+                { phrase: "financial advisor", chinese: "財務顧問" }
+            ],
+            'affect': [
+                { phrase: "affect performance", chinese: "影響績效" },
+                { phrase: "negatively affected", chinese: "負面影響" },
+                { phrase: "affect the outcome", chinese: "影響結果" }
+            ],
+            'afford': [
+                { phrase: "can't afford", chinese: "負擔不起" },
+                { phrase: "afford the cost", chinese: "負擔成本" },
+                { phrase: "affordable price", chinese: "合理價格" }
+            ],
+            'agree': [
+                { phrase: "agree with", chinese: "同意" },
+                { phrase: "mutually agree", chinese: "雙方同意" },
+                { phrase: "agree to terms", chinese: "同意條款" }
+            ],
+            'allow': [
+                { phrase: "allow access", chinese: "允許進入" },
+                { phrase: "allow time for", chinese: "預留時間" },
+                { phrase: "not allowed", chinese: "不允許" }
+            ],
+            'analyze': [
+                { phrase: "analyze data", chinese: "分析資料" },
+                { phrase: "market analysis", chinese: "市場分析" },
+                { phrase: "financial analysis", chinese: "財務分析" }
+            ],
+            'announce': [
+                { phrase: "announce results", chinese: "公布結果" },
+                { phrase: "official announcement", chinese: "正式公告" },
+                { phrase: "announce a merger", chinese: "宣布合併" }
+            ],
+            'annual': [
+                { phrase: "annual report", chinese: "年度報告" },
+                { phrase: "annual meeting", chinese: "年會" },
+                { phrase: "annual revenue", chinese: "年收入" }
+            ],
+            'apply': [
+                { phrase: "apply for", chinese: "申請" },
+                { phrase: "apply online", chinese: "線上申請" },
+                { phrase: "application deadline", chinese: "申請截止日" }
+            ],
+            'appoint': [
+                { phrase: "appoint a director", chinese: "任命主管" },
+                { phrase: "appointment schedule", chinese: "預約時間表" },
+                { phrase: "board appointment", chinese: "董事會任命" }
+            ],
+            'appreciate': [
+                { phrase: "appreciate your help", chinese: "感謝您的幫助" },
+                { phrase: "greatly appreciated", chinese: "非常感激" },
+                { phrase: "asset appreciation", chinese: "資產增值" }
+            ],
+            'approve': [
+                { phrase: "approve the budget", chinese: "批准預算" },
+                { phrase: "pending approval", chinese: "待批准" },
+                { phrase: "approval process", chinese: "審批流程" }
+            ],
+            'arrange': [
+                { phrase: "arrange a meeting", chinese: "安排會議" },
+                { phrase: "travel arrangements", chinese: "旅行安排" },
+                { phrase: "arrange payment", chinese: "安排付款" }
+            ],
+            'arrive': [
+                { phrase: "arrive on time", chinese: "準時到達" },
+                { phrase: "expected arrival", chinese: "預計到達" },
+                { phrase: "arrival date", chinese: "到達日期" }
+            ],
+            'assess': [
+                { phrase: "assess performance", chinese: "評估績效" },
+                { phrase: "risk assessment", chinese: "風險評估" },
+                { phrase: "needs assessment", chinese: "需求評估" }
+            ],
+            'assign': [
+                { phrase: "assign tasks", chinese: "分配任務" },
+                { phrase: "assigned duties", chinese: "指派職責" },
+                { phrase: "project assignment", chinese: "專案分配" }
+            ],
+            'assist': [
+                { phrase: "assist with", chinese: "協助" },
+                { phrase: "technical assistance", chinese: "技術支援" },
+                { phrase: "customer assistance", chinese: "客戶協助" }
+            ],
+            'assume': [
+                { phrase: "assume responsibility", chinese: "承擔責任" },
+                { phrase: "assume the role", chinese: "擔任角色" },
+                { phrase: "safe to assume", chinese: "可以假設" }
+            ],
+            'assure': [
+                { phrase: "assure quality", chinese: "確保品質" },
+                { phrase: "rest assured", chinese: "請放心" },
+                { phrase: "quality assurance", chinese: "品質保證" }
+            ],
+            'attach': [
+                { phrase: "attach a file", chinese: "附加檔案" },
+                { phrase: "please find attached", chinese: "請查收附件" },
+                { phrase: "attachment included", chinese: "包含附件" }
+            ],
+            'attend': [
+                { phrase: "attend a conference", chinese: "參加會議" },
+                { phrase: "attendance record", chinese: "出席記錄" },
+                { phrase: "mandatory attendance", chinese: "強制出席" }
+            ],
+            'attract': [
+                { phrase: "attract customers", chinese: "吸引客戶" },
+                { phrase: "attract investment", chinese: "吸引投資" },
+                { phrase: "attractive offer", chinese: "吸引人的報價" }
+            ],
+            'authorize': [
+                { phrase: "authorize payment", chinese: "授權付款" },
+                { phrase: "authorized personnel", chinese: "授權人員" },
+                { phrase: "authorization required", chinese: "需要授權" }
+            ],
+            'available': [
+                { phrase: "readily available", chinese: "隨時可用" },
+                { phrase: "available resources", chinese: "可用資源" },
+                { phrase: "limited availability", chinese: "有限供應" }
+            ],
+            'avoid': [
+                { phrase: "avoid delays", chinese: "避免延誤" },
+                { phrase: "avoid conflict", chinese: "避免衝突" },
+                { phrase: "risk avoidance", chinese: "風險規避" }
+            ],
+            'aware': [
+                { phrase: "be aware of", chinese: "意識到" },
+                { phrase: "fully aware", chinese: "充分了解" },
+                { phrase: "awareness training", chinese: "意識培訓" }
             ]
         };
 
@@ -423,23 +568,100 @@ class LocalWordGenerator {
             return phrases[word];
         }
 
-        // 否則生成通用詞句
-        const genericPhrases = {
+        // 否則生成商業情境相關的常用詞句
+        return this.generateBusinessPhrases(word, partOfSpeech);
+    }
+
+    // 生成商業情境的常用詞句
+    generateBusinessPhrases(word, partOfSpeech) {
+        // 根據詞性生成商業常用搭配
+        const businessPhraseTemplates = {
             'noun': [
-                { phrase: `the ${word}`, chinese: `這個${word}` },
-                { phrase: `a ${word}`, chinese: `一個${word}` }
+                // 商業名詞的常見搭配
+                { phrase: `${word} management`, chinese: `${word}管理` },
+                { phrase: `${word} analysis`, chinese: `${word}分析` },
+                { phrase: `${word} report`, chinese: `${word}報告` },
+                { phrase: `annual ${word}`, chinese: `年度${word}` },
+                { phrase: `${word} review`, chinese: `${word}審查` },
+                { phrase: `${word} strategy`, chinese: `${word}策略` },
+                { phrase: `${word} development`, chinese: `${word}發展` },
+                { phrase: `${word} planning`, chinese: `${word}規劃` },
+                { phrase: `${word} assessment`, chinese: `${word}評估` },
+                { phrase: `${word} implementation`, chinese: `${word}實施` }
             ],
             'verb': [
-                { phrase: `to ${word}`, chinese: `去${word}` },
-                { phrase: `will ${word}`, chinese: `將會${word}` }
+                // 商業動詞的常見搭配
+                { phrase: `${word} a proposal`, chinese: `${word}提案` },
+                { phrase: `${word} the budget`, chinese: `${word}預算` },
+                { phrase: `${word} performance`, chinese: `${word}績效` },
+                { phrase: `${word} resources`, chinese: `${word}資源` },
+                { phrase: `${word} operations`, chinese: `${word}營運` },
+                { phrase: `${word} effectively`, chinese: `有效地${word}` },
+                { phrase: `${word} professionally`, chinese: `專業地${word}` },
+                { phrase: `${word} immediately`, chinese: `立即${word}` },
+                { phrase: `${word} regularly`, chinese: `定期${word}` },
+                { phrase: `${word} carefully`, chinese: `仔細地${word}` }
             ],
             'adjective': [
-                { phrase: `very ${word}`, chinese: `非常${word}` },
-                { phrase: `more ${word}`, chinese: `更加${word}` }
+                // 商業形容詞的常見搭配
+                { phrase: `${word} performance`, chinese: `${word}的表現` },
+                { phrase: `${word} results`, chinese: `${word}的結果` },
+                { phrase: `${word} approach`, chinese: `${word}的方法` },
+                { phrase: `${word} solution`, chinese: `${word}的解決方案` },
+                { phrase: `${word} strategy`, chinese: `${word}的策略` },
+                { phrase: `${word} market`, chinese: `${word}的市場` },
+                { phrase: `${word} growth`, chinese: `${word}的成長` },
+                { phrase: `${word} development`, chinese: `${word}的發展` },
+                { phrase: `${word} opportunity`, chinese: `${word}的機會` },
+                { phrase: `${word} investment`, chinese: `${word}的投資` }
+            ],
+            'adverb': [
+                // 商業副詞的常見搭配
+                { phrase: `work ${word}`, chinese: `${word}地工作` },
+                { phrase: `perform ${word}`, chinese: `${word}地執行` },
+                { phrase: `respond ${word}`, chinese: `${word}地回應` },
+                { phrase: `communicate ${word}`, chinese: `${word}地溝通` },
+                { phrase: `operate ${word}`, chinese: `${word}地運作` }
             ]
         };
 
-        return genericPhrases[partOfSpeech] || [];
+        // 根據單字特性選擇合適的搭配
+        const templates = businessPhraseTemplates[partOfSpeech];
+        if (!templates || templates.length === 0) {
+            // 如果沒有對應詞性的模板，返回通用商業搭配
+            return [
+                { phrase: `${word} process`, chinese: `${word}流程` },
+                { phrase: `${word} system`, chinese: `${word}系統` },
+                { phrase: `business ${word}`, chinese: `商業${word}` }
+            ];
+        }
+
+        // 根據單字長度和複雜度選擇3個最合適的搭配
+        const selectedPhrases = [];
+        const wordLength = word.length;
+        
+        // 使用不同的索引來選擇多樣化的詞句
+        const indices = [
+            wordLength % templates.length,
+            (wordLength * 2) % templates.length,
+            (wordLength * 3) % templates.length
+        ];
+
+        // 確保索引不重複
+        const uniqueIndices = [...new Set(indices)];
+        while (uniqueIndices.length < 3 && uniqueIndices.length < templates.length) {
+            const newIndex = (uniqueIndices[uniqueIndices.length - 1] + 1) % templates.length;
+            if (!uniqueIndices.includes(newIndex)) {
+                uniqueIndices.push(newIndex);
+            }
+        }
+
+        // 選擇詞句
+        for (const index of uniqueIndices.slice(0, 3)) {
+            selectedPhrases.push(templates[index]);
+        }
+
+        return selectedPhrases;
     }
 
     // 生成 TOEIC 相關例句
