@@ -444,81 +444,611 @@ class LocalWordGenerator {
 
     // 生成 TOEIC 相關例句
     generateToeicExample(word, partOfSpeech, chinese) {
-        const examples = {
+        // 擴展的預設例句庫 - 真實的商業情境
+        const specificExamples = {
+            // A 開頭
             'abandon': {
-                sentence: "The company decided to abandon the unprofitable project.",
-                chinese: "公司決定放棄這個無利可圖的專案。"
+                sentence: "The company decided to abandon the unprofitable project after two quarters of losses.",
+                chinese: "在連續兩季虧損後，公司決定放棄這個無利可圖的專案。"
+            },
+            'abide': {
+                sentence: "All employees must abide by the company's code of conduct.",
+                chinese: "所有員工都必須遵守公司的行為準則。"
             },
             'ability': {
-                sentence: "Her ability to manage multiple tasks impressed the supervisor.",
-                chinese: "她處理多項任務的能力讓主管印象深刻。"
+                sentence: "Her ability to negotiate contracts has saved the company millions.",
+                chinese: "她的合約談判能力為公司節省了數百萬。"
+            },
+            'able': {
+                sentence: "With the new software, we are able to process orders twice as fast.",
+                chinese: "有了新軟體，我們能夠以兩倍的速度處理訂單。"
+            },
+            'abnormal': {
+                sentence: "The accounting department discovered abnormal transactions in the quarterly report.",
+                chinese: "會計部門在季度報告中發現了異常交易。"
             },
             'abroad': {
-                sentence: "The manager will travel abroad for the international conference.",
-                chinese: "經理將出國參加國際會議。"
+                sentence: "Our marketing director frequently travels abroad to meet international clients.",
+                chinese: "我們的行銷總監經常出國會見國際客戶。"
+            },
+            'aboard': {
+                sentence: "Please ensure all passengers are aboard before departure.",
+                chinese: "請確保所有乘客在出發前都已上車。"
             },
             'absence': {
-                sentence: "His absence from the meeting was noticed by everyone.",
-                chinese: "大家都注意到他缺席會議。"
+                sentence: "His frequent absence from team meetings has affected project coordination.",
+                chinese: "他經常缺席團隊會議影響了專案協調。"
+            },
+            'absent': {
+                sentence: "Three employees were absent due to the flu outbreak.",
+                chinese: "由於流感爆發，三名員工缺勤。"
             },
             'absolute': {
-                sentence: "The deadline is absolute and cannot be extended.",
-                chinese: "截止日期是絕對的，不能延期。"
+                sentence: "Customer satisfaction is our absolute priority.",
+                chinese: "客戶滿意度是我們的絕對優先事項。"
+            },
+            'absorb': {
+                sentence: "The parent company will absorb all subsidiary debts.",
+                chinese: "母公司將承擔所有子公司的債務。"
+            },
+            'abstract': {
+                sentence: "Please provide an abstract of your research proposal.",
+                chinese: "請提供您研究提案的摘要。"
+            },
+            'abuse': {
+                sentence: "The company has a zero-tolerance policy for workplace abuse.",
+                chinese: "公司對職場霸凌採取零容忍政策。"
+            },
+            'academic': {
+                sentence: "We require academic transcripts for all job applicants.",
+                chinese: "我們要求所有求職者提供學術成績單。"
+            },
+            'accelerate': {
+                sentence: "Digital transformation will accelerate our business growth.",
+                chinese: "數位轉型將加速我們的業務成長。"
             },
             'accept': {
-                sentence: "We are pleased to accept your proposal.",
-                chinese: "我們很高興接受您的提案。"
+                sentence: "We are pleased to accept your terms and conditions.",
+                chinese: "我們很高興接受您的條款和條件。"
             },
             'access': {
-                sentence: "Employees need a keycard to access the building.",
-                chinese: "員工需要門禁卡才能進入大樓。"
+                sentence: "Remote employees can access the company database through VPN.",
+                chinese: "遠端員工可以通過 VPN 存取公司資料庫。"
+            },
+            'accident': {
+                sentence: "The workplace accident resulted in stricter safety regulations.",
+                chinese: "這起工作場所事故導致了更嚴格的安全規定。"
+            },
+            'accommodate': {
+                sentence: "The conference room can accommodate up to 50 participants.",
+                chinese: "會議室可容納多達 50 名參與者。"
+            },
+            'accompany': {
+                sentence: "A detailed invoice must accompany all expense reports.",
+                chinese: "所有費用報告都必須附上詳細的發票。"
+            },
+            'accomplish': {
+                sentence: "The team accomplished all project milestones ahead of schedule.",
+                chinese: "團隊提前完成了所有專案里程碑。"
             },
             'account': {
-                sentence: "Please transfer the funds to our corporate account.",
-                chinese: "請將資金轉入我們的公司帳戶。"
+                sentence: "The finance team is reviewing all client accounts for discrepancies.",
+                chinese: "財務團隊正在審查所有客戶帳戶是否有差異。"
+            },
+            'accountant': {
+                sentence: "Our certified accountant will prepare the annual tax returns.",
+                chinese: "我們的註冊會計師將準備年度納稅申報表。"
+            },
+            'accurate': {
+                sentence: "Accurate financial forecasting is essential for business planning.",
+                chinese: "準確的財務預測對業務規劃至關重要。"
             },
             'achieve': {
-                sentence: "The team worked hard to achieve their sales target.",
-                chinese: "團隊努力工作以達成銷售目標。"
+                sentence: "We achieved a 15% increase in productivity this quarter.",
+                chinese: "本季我們的生產力提高了 15%。"
             },
             'acquire': {
-                sentence: "The company plans to acquire new technology next quarter.",
-                chinese: "公司計劃下季度採購新技術。"
+                sentence: "The corporation plans to acquire three startups this year.",
+                chinese: "該公司計劃今年收購三家新創公司。"
+            },
+            'activity': {
+                sentence: "Marketing activities will focus on social media campaigns.",
+                chinese: "行銷活動將專注於社群媒體活動。"
+            },
+            'actual': {
+                sentence: "The actual costs exceeded the initial budget by 20%.",
+                chinese: "實際成本超出初始預算 20%。"
+            },
+            'adapt': {
+                sentence: "Companies must adapt quickly to changing market conditions.",
+                chinese: "公司必須快速適應不斷變化的市場條件。"
+            },
+            'add': {
+                sentence: "We need to add two more developers to meet the deadline.",
+                chinese: "我們需要再增加兩名開發人員才能趕上截止日期。"
+            },
+            'address': {
+                sentence: "The CEO will address employee concerns at tomorrow's meeting.",
+                chinese: "執行長將在明天的會議上處理員工的關切。"
+            },
+            'adequate': {
+                sentence: "Please ensure adequate supplies are ordered for the conference.",
+                chinese: "請確保為會議訂購足夠的用品。"
+            },
+            'adjust': {
+                sentence: "We need to adjust our pricing strategy for the Asian market.",
+                chinese: "我們需要調整亞洲市場的定價策略。"
+            },
+            'administration': {
+                sentence: "The administration department handles all employee benefits.",
+                chinese: "行政部門處理所有員工福利。"
+            },
+            'admit': {
+                sentence: "The manager admitted that the project timeline was unrealistic.",
+                chinese: "經理承認專案時間表不切實際。"
+            },
+            'adopt': {
+                sentence: "We will adopt new quality control measures next month.",
+                chinese: "我們將在下個月採用新的品質控制措施。"
+            },
+            'advance': {
+                sentence: "Employees can request a salary advance in emergency situations.",
+                chinese: "員工在緊急情況下可以申請預支薪水。"
+            },
+            'advantage': {
+                sentence: "Our competitive advantage lies in superior customer service.",
+                chinese: "我們的競爭優勢在於卓越的客戶服務。"
+            },
+            'advertise': {
+                sentence: "We advertise our products through multiple digital channels.",
+                chinese: "我們通過多個數位管道宣傳我們的產品。"
+            },
+            'advice': {
+                sentence: "The consultant's advice helped streamline our operations.",
+                chinese: "顧問的建議幫助我們精簡了營運。"
+            },
+            'advise': {
+                sentence: "I advise reviewing the contract with legal counsel.",
+                chinese: "我建議與法律顧問一起審查合約。"
+            },
+            'affect': {
+                sentence: "Supply chain disruptions will affect delivery schedules.",
+                chinese: "供應鏈中斷將影響交貨時間表。"
+            },
+            'afford': {
+                sentence: "Small businesses cannot afford lengthy legal disputes.",
+                chinese: "小企業無法承擔漫長的法律糾紛。"
+            },
+            'after': {
+                sentence: "The audit will begin after the fiscal year ends.",
+                chinese: "審計將在財政年度結束後開始。"
+            },
+            'agency': {
+                sentence: "We hired a marketing agency to redesign our brand.",
+                chinese: "我們聘請了一家行銷公司來重新設計我們的品牌。"
+            },
+            'agenda': {
+                sentence: "Please submit agenda items for next week's board meeting.",
+                chinese: "請提交下週董事會會議的議程項目。"
+            },
+            'agent': {
+                sentence: "Our insurance agent recommended comprehensive coverage.",
+                chinese: "我們的保險代理人建議全面保險。"
+            },
+            'agree': {
+                sentence: "Both parties agree to the revised payment terms.",
+                chinese: "雙方同意修訂後的付款條件。"
+            },
+            'agreement': {
+                sentence: "The partnership agreement will be signed tomorrow.",
+                chinese: "合作協議將於明天簽署。"
+            },
+            'aim': {
+                sentence: "We aim to reduce operational costs by 10% this year.",
+                chinese: "我們的目標是今年將營運成本降低 10%。"
+            },
+            'airport': {
+                sentence: "The company shuttle provides transportation to the airport.",
+                chinese: "公司接駁車提供前往機場的交通服務。"
+            },
+            'allow': {
+                sentence: "Company policy does not allow personal use of office equipment.",
+                chinese: "公司政策不允許個人使用辦公設備。"
+            },
+            'alternative': {
+                sentence: "We need to find alternative suppliers to reduce dependency.",
+                chinese: "我們需要尋找替代供應商以減少依賴。"
+            },
+            'although': {
+                sentence: "Although sales increased, profit margins remained flat.",
+                chinese: "儘管銷售額增加，但利潤率保持不變。"
+            },
+            'always': {
+                sentence: "Customer feedback is always valuable for improvement.",
+                chinese: "客戶回饋對於改進總是有價值的。"
+            },
+            'amend': {
+                sentence: "We need to amend the contract to include new specifications.",
+                chinese: "我們需要修改合約以包含新規格。"
+            },
+            'amount': {
+                sentence: "The total amount due is listed on the invoice.",
+                chinese: "應付總額列在發票上。"
+            },
+            'analysis': {
+                sentence: "The market analysis reveals significant growth potential.",
+                chinese: "市場分析顯示了巨大的成長潛力。"
+            },
+            'analyze': {
+                sentence: "We analyze customer data to improve service quality.",
+                chinese: "我們分析客戶資料以提高服務品質。"
+            },
+            'announce': {
+                sentence: "The company will announce quarterly earnings next week.",
+                chinese: "公司將在下週公布季度收益。"
+            },
+            'annual': {
+                sentence: "The annual report shows steady revenue growth.",
+                chinese: "年度報告顯示收入穩定成長。"
+            },
+            'answer': {
+                sentence: "Please answer all customer inquiries within 24 hours.",
+                chinese: "請在 24 小時內回覆所有客戶詢問。"
+            },
+            'anticipate': {
+                sentence: "We anticipate strong demand for the new product line.",
+                chinese: "我們預期新產品線會有強勁的需求。"
+            },
+            'any': {
+                sentence: "Any delays must be reported to management immediately.",
+                chinese: "任何延誤都必須立即向管理層報告。"
+            },
+            'apologize': {
+                sentence: "We apologize for the inconvenience caused by the system outage.",
+                chinese: "我們為系統故障造成的不便深表歉意。"
+            },
+            'apparent': {
+                sentence: "It became apparent that we needed additional resources.",
+                chinese: "很明顯我們需要額外的資源。"
+            },
+            'appear': {
+                sentence: "The CEO will appear at the annual shareholders meeting.",
+                chinese: "執行長將出席年度股東大會。"
+            },
+            'application': {
+                sentence: "Your job application has been forwarded to the hiring manager.",
+                chinese: "您的求職申請已轉發給招聘經理。"
+            },
+            'apply': {
+                sentence: "These new regulations apply to all departments.",
+                chinese: "這些新規定適用於所有部門。"
+            },
+            'appoint': {
+                sentence: "The board will appoint a new CFO next month.",
+                chinese: "董事會將在下個月任命新的財務長。"
+            },
+            'appointment': {
+                sentence: "Please schedule an appointment with the client for Tuesday.",
+                chinese: "請安排週二與客戶的約會。"
+            },
+            'appreciate': {
+                sentence: "We appreciate your patience during the renovation.",
+                chinese: "我們感謝您在裝修期間的耐心。"
+            },
+            'approach': {
+                sentence: "Our approach to customer service sets us apart from competitors.",
+                chinese: "我們的客戶服務方式使我們有別於競爭對手。"
+            },
+            'appropriate': {
+                sentence: "Please wear appropriate attire for the client presentation.",
+                chinese: "請為客戶簡報穿著適當的服裝。"
+            },
+            'approval': {
+                sentence: "Budget approval is required before starting the project.",
+                chinese: "在開始專案之前需要預算批准。"
+            },
+            'approve': {
+                sentence: "The committee will approve the proposal at today's meeting.",
+                chinese: "委員會將在今天的會議上批准該提案。"
+            },
+            'area': {
+                sentence: "Sales in the metropolitan area exceeded expectations.",
+                chinese: "大都會地區的銷售超出預期。"
+            },
+            'argue': {
+                sentence: "The lawyers will argue the case in court next week.",
+                chinese: "律師將在下週在法庭上辯論此案。"
+            },
+            'arise': {
+                sentence: "Should any problems arise, contact tech support immediately.",
+                chinese: "如果出現任何問題，請立即聯繫技術支援。"
+            },
+            'arrange': {
+                sentence: "Please arrange transportation for the visiting executives.",
+                chinese: "請為來訪的主管安排交通。"
+            },
+            'arrival': {
+                sentence: "The shipment's arrival has been delayed by customs.",
+                chinese: "貨物的到達因海關而延誤。"
+            },
+            'arrive': {
+                sentence: "The consultant will arrive at 9 AM for the strategy session.",
+                chinese: "顧問將在上午 9 點到達進行策略會議。"
+            },
+            'article': {
+                sentence: "The trade journal published an article about our innovation.",
+                chinese: "貿易期刊發表了一篇關於我們創新的文章。"
+            },
+            'as': {
+                sentence: "As per your request, we have expedited the order.",
+                chinese: "根據您的要求，我們已加快訂單處理。"
+            },
+            'ask': {
+                sentence: "Customers often ask about our return policy.",
+                chinese: "客戶經常詢問我們的退貨政策。"
+            },
+            'aspect': {
+                sentence: "Every aspect of the proposal was carefully reviewed.",
+                chinese: "提案的每個方面都經過仔細審查。"
+            },
+            'assemble': {
+                sentence: "Workers assemble products according to quality standards.",
+                chinese: "工人根據品質標準組裝產品。"
+            },
+            'assess': {
+                sentence: "We need to assess the financial impact of the merger.",
+                chinese: "我們需要評估合併的財務影響。"
+            },
+            'asset': {
+                sentence: "Our employees are our most valuable asset.",
+                chinese: "我們的員工是我們最寶貴的資產。"
+            },
+            'assign': {
+                sentence: "The manager will assign tasks based on expertise.",
+                chinese: "經理將根據專業知識分配任務。"
+            },
+            'assist': {
+                sentence: "Customer service representatives assist with product inquiries.",
+                chinese: "客服代表協助處理產品諮詢。"
+            },
+            'associate': {
+                sentence: "Each sales associate must meet monthly quotas.",
+                chinese: "每個銷售人員都必須達到月度配額。"
+            },
+            'assume': {
+                sentence: "We cannot assume that market conditions will remain stable.",
+                chinese: "我們不能假設市場條件會保持穩定。"
+            },
+            'assure': {
+                sentence: "I can assure you that quality is our top priority.",
+                chinese: "我可以向您保證品質是我們的首要任務。"
+            },
+            'attach': {
+                sentence: "Please attach your resume to the email application.",
+                chinese: "請將您的履歷附在電子郵件申請中。"
+            },
+            'attempt': {
+                sentence: "The company will attempt to enter new markets next year.",
+                chinese: "公司將嘗試明年進入新市場。"
+            },
+            'attend': {
+                sentence: "All managers must attend the mandatory training session.",
+                chinese: "所有經理都必須參加強制培訓課程。"
+            },
+            'attention': {
+                sentence: "This matter requires immediate attention from senior management.",
+                chinese: "此事需要高層管理人員立即關注。"
+            },
+            'attitude': {
+                sentence: "A positive attitude contributes to workplace productivity.",
+                chinese: "積極的態度有助於提高工作效率。"
+            },
+            'attorney': {
+                sentence: "Our corporate attorney reviewed the merger documents.",
+                chinese: "我們的公司律師審查了合併文件。"
+            },
+            'attract': {
+                sentence: "Competitive salaries attract top talent to our company.",
+                chinese: "有競爭力的薪資吸引頂尖人才加入我們公司。"
+            },
+            'auction': {
+                sentence: "The company's assets will be sold at auction.",
+                chinese: "公司的資產將在拍賣會上出售。"
+            },
+            'audience': {
+                sentence: "The presentation captivated the audience of investors.",
+                chinese: "這次簡報吸引了投資者觀眾。"
+            },
+            'audit': {
+                sentence: "The annual audit revealed no significant discrepancies.",
+                chinese: "年度審計未發現重大差異。"
+            },
+            'author': {
+                sentence: "The author of the business guide will speak at our conference.",
+                chinese: "這本商業指南的作者將在我們的會議上發言。"
+            },
+            'authority': {
+                sentence: "Department heads have authority to approve overtime.",
+                chinese: "部門主管有權批准加班。"
+            },
+            'authorize': {
+                sentence: "Only senior managers can authorize purchases over $10,000.",
+                chinese: "只有高級經理才能授權超過 10,000 美元的採購。"
+            },
+            'automatic': {
+                sentence: "The system provides automatic backup every night.",
+                chinese: "系統每晚自動提供備份。"
+            },
+            'available': {
+                sentence: "Technical support is available 24/7 for premium customers.",
+                chinese: "高級客戶可享受全天候技術支援。"
+            },
+            'average': {
+                sentence: "The average processing time has decreased by 30%.",
+                chinese: "平均處理時間減少了 30%。"
+            },
+            'avoid': {
+                sentence: "To avoid delays, submit all documents before the deadline.",
+                chinese: "為避免延誤，請在截止日期前提交所有文件。"
+            },
+            'award': {
+                sentence: "The company received an award for environmental sustainability.",
+                chinese: "該公司因環境永續發展而獲獎。"
+            },
+            'aware': {
+                sentence: "Employees should be aware of the new safety protocols.",
+                chinese: "員工應該了解新的安全協議。"
+            },
+            'away': {
+                sentence: "The manager is away on business until Friday.",
+                chinese: "經理出差到週五。"
             }
         };
 
-        // 如果有預設例句，使用預設
-        if (examples[word]) {
-            return examples[word];
+        // 如果有特定例句，直接返回
+        if (specificExamples[word]) {
+            return specificExamples[word];
         }
 
-        // 否則生成通用例句
-        const genericExamples = {
-            'noun': {
-                sentence: `The ${word} is important for business operations.`,
-                chinese: `${chinese}對業務運作很重要。`
-            },
-            'verb': {
-                sentence: `We need to ${word} the proposal by Friday.`,
-                chinese: `我們需要在星期五前${chinese}提案。`
-            },
-            'adjective': {
-                sentence: `The ${word} report was submitted to management.`,
-                chinese: `${chinese}的報告已提交給管理層。`
-            },
-            'adverb': {
-                sentence: `The project was completed ${word}.`,
-                chinese: `專案${chinese}完成了。`
-            },
-            'preposition': {
-                sentence: `The meeting is scheduled ${word} 3 PM.`,
-                chinese: `會議安排${chinese}下午3點。`
-            }
+        // 根據詞性生成更多樣化的例句
+        const contextualExamples = this.generateContextualExample(word, partOfSpeech, chinese);
+        return contextualExamples;
+    }
+
+    // 生成情境化的例句
+    generateContextualExample(word, partOfSpeech, chinese) {
+        // 商業情境模板
+        const businessContexts = {
+            'noun': [
+                {
+                    sentence: `The ${word} was discussed in detail during the board meeting.`,
+                    chinese: `董事會會議上詳細討論了${chinese}。`
+                },
+                {
+                    sentence: `Our ${word} has improved significantly since last quarter.`,
+                    chinese: `自上季度以來，我們的${chinese}有了顯著改善。`
+                },
+                {
+                    sentence: `The new ${word} policy will be implemented next month.`,
+                    chinese: `新的${chinese}政策將於下個月實施。`
+                },
+                {
+                    sentence: `We need to review the ${word} before making a decision.`,
+                    chinese: `在做決定之前，我們需要審查${chinese}。`
+                },
+                {
+                    sentence: `The ${word} exceeded our initial expectations.`,
+                    chinese: `${chinese}超出了我們最初的預期。`
+                }
+            ],
+            'verb': [
+                {
+                    sentence: `The management team will ${word} the proposal tomorrow.`,
+                    chinese: `管理團隊明天將${chinese}這個提案。`
+                },
+                {
+                    sentence: `We must ${word} our strategy to remain competitive.`,
+                    chinese: `我們必須${chinese}我們的策略以保持競爭力。`
+                },
+                {
+                    sentence: `Employees are encouraged to ${word} innovative solutions.`,
+                    chinese: `鼓勵員工${chinese}創新的解決方案。`
+                },
+                {
+                    sentence: `The company decided to ${word} its operations overseas.`,
+                    chinese: `公司決定${chinese}其海外業務。`
+                },
+                {
+                    sentence: `Please ${word} the documents before the deadline.`,
+                    chinese: `請在截止日期前${chinese}文件。`
+                }
+            ],
+            'adjective': [
+                {
+                    sentence: `The ${word} performance exceeded quarterly targets.`,
+                    chinese: `${chinese}的表現超過了季度目標。`
+                },
+                {
+                    sentence: `We received ${word} feedback from our clients.`,
+                    chinese: `我們收到了客戶${chinese}的回饋。`
+                },
+                {
+                    sentence: `The ${word} market conditions affected our sales.`,
+                    chinese: `${chinese}的市場條件影響了我們的銷售。`
+                },
+                {
+                    sentence: `This is a ${word} opportunity for business expansion.`,
+                    chinese: `這是業務擴展的${chinese}機會。`
+                },
+                {
+                    sentence: `The ${word} results were presented to stakeholders.`,
+                    chinese: `${chinese}的結果已向利益相關者展示。`
+                }
+            ],
+            'adverb': [
+                {
+                    sentence: `The project was ${word} completed ahead of schedule.`,
+                    chinese: `專案${chinese}地提前完成了。`
+                },
+                {
+                    sentence: `Sales have increased ${word} over the past year.`,
+                    chinese: `過去一年銷售額${chinese}地增長。`
+                },
+                {
+                    sentence: `The team worked ${word} to meet the deadline.`,
+                    chinese: `團隊${chinese}地工作以趕上截止日期。`
+                },
+                {
+                    sentence: `Customer satisfaction has improved ${word}.`,
+                    chinese: `客戶滿意度${chinese}地提高了。`
+                },
+                {
+                    sentence: `We ${word} appreciate your business partnership.`,
+                    chinese: `我們${chinese}地感謝您的業務合作。`
+                }
+            ],
+            'preposition': [
+                {
+                    sentence: `The meeting will be held ${word} the conference room.`,
+                    chinese: `會議將${chinese}會議室舉行。`
+                },
+                {
+                    sentence: `Please submit the report ${word} Friday.`,
+                    chinese: `請${chinese}週五提交報告。`
+                },
+                {
+                    sentence: `The office is located ${word} the financial district.`,
+                    chinese: `辦公室位於${chinese}金融區。`
+                },
+                {
+                    sentence: `We'll discuss this ${word} the next meeting.`,
+                    chinese: `我們將${chinese}下次會議討論這個問題。`
+                }
+            ],
+            'conjunction': [
+                {
+                    sentence: `We'll proceed with the plan ${word} we receive approval.`,
+                    chinese: `${chinese}我們收到批准，我們將繼續執行計劃。`
+                },
+                {
+                    sentence: `The project was successful ${word} there were challenges.`,
+                    chinese: `${chinese}有挑戰，專案還是成功了。`
+                }
+            ]
         };
 
-        return genericExamples[partOfSpeech] || {
-            sentence: `This is an example of "${word}" in business context.`,
-            chinese: `這是"${word}"在商業環境中的例子。`
+        // 選擇適合的模板
+        const templates = businessContexts[partOfSpeech];
+        if (templates && templates.length > 0) {
+            // 根據單字的字母順序選擇不同的模板，增加多樣性
+            const index = word.charCodeAt(0) % templates.length;
+            return templates[index];
+        }
+
+        // 預設例句（如果沒有匹配的詞性）
+        return {
+            sentence: `The word "${word}" is commonly used in business communications.`,
+            chinese: `"${word}"（${chinese}）這個詞常用於商業溝通中。`
         };
     }
 

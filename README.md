@@ -15,7 +15,8 @@
 ## 🚀 快速開始
 
 ### 線上使用
-直接訪問：[https://seanchiu89757.github.io/toeic-words/]
+直接訪問：[https://你的帳號.github.io/toeic-words/](https://你的帳號.github.io/toeic-words/)
+
 ### 手機使用
 1. 開啟上述網址
 2. 點選瀏覽器選單「加到主畫面」
