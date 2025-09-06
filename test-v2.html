@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成器 V2.0 測試</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { 
+            padding: 10px 15px; 
+            margin: 5px; 
+            cursor: pointer;
+        }
+        #log {
+            background: #f5f5f5;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 生成器 V2.0 測試頁面</h1>
+    
+    <div class="test-section">
+        <h2>基本功能測試</h2>
+        <button onclick="testBasicFunctions()">測試基本功能</button>
+        <button onclick="testPromptGeneration()">測試 Prompt 生成</button>
+        <button onclick="testDuplicateCheck()">測試重複檢查</button>
+        <button onclick="testCostMonitor()">測試成本監控</button>
+    </div>
+
+    <div class="test-section">
+        <h2>JSON 解析測試</h2>
+        <button onclick="testJSONParsing()">測試 JSON 解析</button>
+        <button onclick="testBackupWords()">測試後備詞庫</button>
+    </div>
+
+    <div class="test-section">
+        <h2>比較測試</h2>
+        <p>比較新舊生成器的差異</p>
+        <button onclick="compareGenerators()">比較生成器</button>
+    </div>
+
+    <div class="test-section">
+        <h2>測試日誌</h2>
+        <div id="log"></div>
+        <button onclick="clearLog()">清除日誌</button>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/generator.js"></script>
+    <script src="js/generator-v2.js"></script>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            log.innerHTML += `[${timestamp}] <span class="${className}">${message}</span>\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog() {
+            log.innerHTML = '';
+        }
+
+        // 測試基本功能
+        function testBasicFunctions() {
+            addLog('=== 基本功能測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                addLog('✅ WordGeneratorV2 實例化成功', 'success');
+                
+                // 測試配置
+                addLog(`📋 批次大小: ${generatorV2.config.batchSize}`);
+                addLog(`📋 模型: ${generatorV2.config.model}`);
+                addLog(`📋 溫度: ${generatorV2.config.temperature}`);
+                addLog(`📋 避免列表限制: ${generatorV2.config.avoidListLimit}`);
+                
+                // 測試成本監控初始化
+                const report = generatorV2.getCostReport();
+                addLog(`💰 初始成本: $${report.totalCost}`, 'success');
+                
+            } catch (error) {
+                addLog(`❌ 基本功能測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試 Prompt 生成
+        function testPromptGeneration() {
+            addLog('=== Prompt 生成測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                
+                // 模擬現有單字
+                generatorV2.existingWords.add('business');
+                generatorV2.existingWords.add('meeting');
+                generatorV2.recentWords = ['client', 'report', 'schedule'];
+                
+                const avoidWords = generatorV2.getMustAvoidWords('300-500');
+                addLog(`🚫 避免單字列表 (${avoidWords.length}): ${avoidWords.join(', ')}`);
+                
+                const prompt = generatorV2.buildMinimalPrompt('300-500', 5, avoidWords);
+                addLog(`📝 生成的 Prompt 長度: ${prompt.length} 字元`);
+                addLog(`📝 Prompt 預覽:\n${prompt.substring(0, 200)}...`, 'info');
+                
+            } catch (error) {
+                addLog(`❌ Prompt 生成測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試重複檢查
+        function testDuplicateCheck() {
+            addLog('=== 重複檢查測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                
+                // 模擬單字數據
+                const testWords = [
+                    { word: 'budget', chinese: '預算' },
+                    { word: 'Budget', chinese: '預算' }, // 大寫重複
+                    { word: 'client', chinese: '客戶' },
+                    { word: 'report', chinese: '報告' },
+                    { word: 'budget', chinese: '預算' }  // 完全重複
+                ];
+                
+                const filtered = generatorV2.filterValidWords(testWords, '300-500');
+                addLog(`📊 原始單字數: ${testWords.length}`);
+                addLog(`📊 過濾後單字數: ${filtered.length}`);
+                addLog(`✅ 通過的單字: ${filtered.map(w => w.word).join(', ')}`, 'success');
+                
+                // 測試相似度檢查
+                generatorV2.existingWords.add('work');
+                const isSimilar = generatorV2.isTooSimilar('works');
+                addLog(`🔍 'works' 與 'work' 相似度檢查: ${isSimilar ? '太相似' : '可接受'}`, 
+                      isSimilar ? 'success' : 'error');
+                
+            } catch (error) {
+                addLog(`❌ 重複檢查測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試成本監控
+        function testCostMonitor() {
+            addLog('=== 成本監控測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                
+                // 模擬 API 調用成本
+                const mockUsage = {
+                    prompt_tokens: 100,
+                    completion_tokens: 50,
+                    total_tokens: 150
+                };
+                
+                generatorV2.trackCost(mockUsage);
+                
+                const report = generatorV2.getCostReport();
+                addLog(`💰 模擬調用後成本報告:`);
+                addLog(`   - 調用次數: ${report.totalCalls}`);
+                addLog(`   - 總 Token: ${report.totalTokens}`);
+                addLog(`   - 總成本: $${report.totalCost.toFixed(6)}`);
+                addLog(`   - 平均成本: $${report.averageCostPerCall.toFixed(6)}`);
+                addLog(`   - 剩餘預算: $${report.remainingBudget.toFixed(2)}`, 'success');
+                
+                // 測試重置
+                generatorV2.resetCostMonitor();
+                const resetReport = generatorV2.getCostReport();
+                addLog(`🔄 重置後總成本: $${resetReport.totalCost}`, 'success');
+                
+            } catch (error) {
+                addLog(`❌ 成本監控測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試 JSON 解析
+        function testJSONParsing() {
+            addLog('=== JSON 解析測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                
+                // 測試正常 JSON
+                const validJSON = `{
+                    "words": [
+                        {
+                            "word": "test",
+                            "chinese": "測試",
+                            "phonetic": "/test/",
+                            "part_of_speech": "noun",
+                            "toeic_example": {"sentence": "This is a test.", "chinese": "這是測試。"}
+                        }
+                    ]
+                }`;
+                
+                const result1 = generatorV2.parseResponse(validJSON);
+                addLog(`✅ 正常 JSON 解析: ${result1.words.length} 個單字`, 'success');
+                
+                // 測試帶垃圾的 JSON
+                const messyJSON = `這是一些說明文字
+                
+                ${validJSON}
+                
+                還有一些結尾文字`;
+                
+                const result2 = generatorV2.parseResponse(messyJSON);
+                addLog(`✅ 帶垃圾 JSON 解析: ${result2.words.length} 個單字`, 'success');
+                
+                // 測試完全錯誤的回應
+                const badResponse = "這不是JSON，只是普通文字回應";
+                const result3 = generatorV2.parseResponse(badResponse);
+                addLog(`⚠️ 錯誤回應處理: ${result3.words.length} 個單字 (應該是0)`, 
+                      result3.words.length === 0 ? 'success' : 'error');
+                
+            } catch (error) {
+                addLog(`❌ JSON 解析測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試後備詞庫
+        function testBackupWords() {
+            addLog('=== 後備詞庫測試 ===');
+            
+            try {
+                const generatorV2 = new WordGeneratorV2();
+                
+                const backupWords = generatorV2.getBackupWords('300-500', 3);
+                addLog(`🔄 後備詞庫獲取: ${backupWords.length} 個單字`);
+                addLog(`🔄 單字列表: ${backupWords.map(w => `${w.word}(${w.chinese})`).join(', ')}`, 'success');
+                
+                // 測試不存在的等級
+                const backupWords2 = generatorV2.getBackupWords('不存在等級', 2);
+                addLog(`🔄 不存在等級處理: ${backupWords2.length} 個單字 (使用預設)`, 'success');
+                
+            } catch (error) {
+                addLog(`❌ 後備詞庫測試失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 比較生成器
+        function compareGenerators() {
+            addLog('=== 生成器比較 ===');
+            
+            try {
+                const oldGenerator = new WordGenerator();
+                const newGenerator = new WordGeneratorV2();
+                
+                addLog('📊 功能比較:');
+                addLog(`   舊版模型: GPT-4`);
+                addLog(`   新版模型: ${newGenerator.config.model}`);
+                addLog(`   舊版溫度: 0.9`);
+                addLog(`   新版溫度: ${newGenerator.config.temperature}`);
+                addLog(`   新版批次大小: ${newGenerator.config.batchSize}`);
+                addLog(`   新版重試次數: ${newGenerator.config.maxRetries}`);
+                
+                addLog('🆕 V2.0 新功能:');
+                addLog(`   ✅ 成本監控和預警`);
+                addLog(`   ✅ 簡化的 JSON 處理`);
+                addLog(`   ✅ 多層防重複機制`);
+                addLog(`   ✅ 智能避免列表管理`);
+                addLog(`   ✅ 後備詞庫機制`, 'success');
+                
+            } catch (error) {
+                addLog(`❌ 生成器比較失敗: ${error.message}`, 'error');
+            }
+        }
+
+        // 頁面載入時執行基本測試
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('🚀 生成器 V2.0 測試頁面已載入', 'success');
+            addLog('點擊上方按鈕執行各項測試');
+        });
+    </script>
+</body>
+</html>

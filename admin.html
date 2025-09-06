@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>單字資料管理系統</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>單字資料管理系統 V3.0</h1>
+            <div class="version-info">
+                🚀 新版本特色：本地檔案處理、自動分級、包含常用詞句、無需API
+            </div>
+        </header>
+
+        <main>
+            <div class="file-upload-section">
+                <h2>📁 檔案上傳</h2>
+                <div class="upload-area">
+                    <label for="file-upload" class="upload-label">
+                        <div class="upload-icon">📄</div>
+                        <div>點擊選擇或拖曳 TXT 檔案到此處</div>
+                        <input type="file" id="file-upload" accept=".txt" style="display: none;">
+                    </label>
+                </div>
+                <div id="file-status" class="status-message"></div>
+            </div>
+
+            <div class="processing-section">
+                <h2>處理設定</h2>
+                <div class="process-info">
+                    <h4>📊 自動分級規則：</h4>
+                    <ul>
+                        <li><strong>300以下：</strong> 1-200 (最基礎單字)</li>
+                        <li><strong>300-500：</strong> 201-700 (基礎商業單字)</li>
+                        <li><strong>500-600：</strong> 701-1300 (中級商業單字)</li>
+                        <li><strong>600-700：</strong> 1301-2000 (進階商業單字)</li>
+                        <li><strong>700-800：</strong> 2001-2500 (專業商業單字)</li>
+                        <li><strong>800-900：</strong> 2501-2800 (高級專業單字)</li>
+                        <li><strong>900以上：</strong> 2801-3000 (最高級單字)</li>
+                    </ul>
+                </div>
+                
+                <div class="button-group">
+                    <button id="process-btn" class="primary-btn" disabled>開始處理檔案</button>
+                    <button id="save-static-btn" class="secondary-btn" disabled>產生靜態資料檔</button>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h2>處理進度</h2>
+                <div id="process-log" class="log-area"></div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progress-text">待命中...</p>
+            </div>
+
+            <div class="preview-section" style="display: none;">
+                <h2>📝 資料預覽</h2>
+                <div id="preview-stats" class="stats"></div>
+                <div id="preview-sample" class="sample-area"></div>
+            </div>
+
+            <div class="database-section">
+                <h2>資料庫管理</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span>總單字數：</span>
+                        <span id="total-words">0</span>
+                    </div>
+                    <div class="stat-item" id="level-stats"></div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="export-btn">匯出 JSON</button>
+                    <button id="import-btn">匯入 JSON</button>
+                    <button id="clear-btn" class="danger-btn">清空資料庫</button>
+                </div>
+                <input type="file" id="json-file-input" style="display: none;" accept=".json" />
+            </div>
+        </main>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/local-generator.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let uploadedContent = null;
+            
+            // 初始化資料庫統計
+            updateStatistics();
+            
+            // 檔案上傳處理
+            const fileUpload = document.getElementById('file-upload');
+            const uploadArea = document.querySelector('.upload-area');
+            const fileStatus = document.getElementById('file-status');
+            const processBtn = document.getElementById('process-btn');
+            const saveStaticBtn = document.getElementById('save-static-btn');
+            
+            // 拖放功能
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'text/plain') {
+                    handleFile(files[0]);
+                } else {
+                    fileStatus.textContent = '請選擇 TXT 檔案';
+                    fileStatus.className = 'status-message error';
+                }
+            });
+            
+            // 檔案選擇
+            fileUpload.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+            
+            // 處理檔案
+            async function handleFile(file) {
+                fileStatus.textContent = `已選擇：${file.name}`;
+                fileStatus.className = 'status-message success';
+                
+                uploadedContent = await file.text();
+                processBtn.disabled = false;
+                
+                // 預覽檔案前幾行
+                const lines = uploadedContent.split('\n').slice(0, 5);
+                console.log('檔案預覽：', lines);
+            }
+            
+            // 處理按鈕
+            processBtn.addEventListener('click', async () => {
+                if (!uploadedContent) {
+                    alert('請先選擇檔案');
+                    return;
+                }
+                
+                const logArea = document.getElementById('process-log');
+                const progressFill = document.getElementById('progress-fill');
+                const progressText = document.getElementById('progress-text');
+                
+                processBtn.disabled = true;
+                logArea.innerHTML = '🚀 開始處理檔案...\n';
+                
+                try {
+                    // 處理檔案
+                    const processedWords = await localGenerator.processFile(uploadedContent);
+                    logArea.innerHTML += `✅ 成功解析 ${processedWords.length} 個單字\n`;
+                    
+                    // 顯示統計
+                    const stats = localGenerator.getStatistics();
+                    logArea.innerHTML += '\n📊 等級分布：\n';
+                    for (const [level, count] of Object.entries(stats.byLevel)) {
+                        logArea.innerHTML += `  ${level}: ${count} 個單字\n`;
+                    }
+                    
+                    // 儲存到資料庫
+                    logArea.innerHTML += '\n💾 儲存到資料庫...\n';
+                    await wordDB.init();
+                    
+                    const result = await localGenerator.saveToDatabase((message, progress) => {
+                        if (message) {
+                            logArea.innerHTML += message + '\n';
+                            logArea.scrollTop = logArea.scrollHeight;
+                        }
+                        if (progress !== undefined) {
+                            progressFill.style.width = `${progress}%`;
+                            progressText.textContent = `進度: ${Math.round(progress)}%`;
+                        }
+                    });
+                    
+                    logArea.innerHTML += `\n🎉 處理完成！共儲存 ${result.total} 個單字\n`;
+                    
+                    // 顯示預覽
+                    showPreview(processedWords);
+                    
+                    // 啟用靜態檔案產生按鈕
+                    saveStaticBtn.disabled = false;
+                    
+                    // 更新統計
+                    await updateStatistics();
+                    
+                } catch (error) {
+                    logArea.innerHTML += `❌ 處理失敗: ${error.message}\n`;
+                    console.error(error);
+                }
+                
+                processBtn.disabled = false;
+            });
+            
+            // 產生靜態資料檔
+            saveStaticBtn.addEventListener('click', () => {
+                const staticData = localGenerator.generateStaticDataFile();
+                const jsonData = JSON.stringify(staticData, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'toeic_words_static.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert('靜態資料檔已產生！請將檔案放置在 data/ 資料夾中。');
+            });
+            
+            // 顯示預覽
+            function showPreview(words) {
+                const previewSection = document.querySelector('.preview-section');
+                const previewStats = document.getElementById('preview-stats');
+                const previewSample = document.getElementById('preview-sample');
+                
+                previewSection.style.display = 'block';
+                
+                // 顯示統計
+                const stats = localGenerator.getStatistics();
+                previewStats.innerHTML = `
+                    <div>總單字數: ${stats.total}</div>
+                    <div>等級分布: ${Object.entries(stats.byLevel).map(([l, c]) => `${l}(${c})`).join(', ')}</div>
+                `;
+                
+                // 顯示樣本（前5個單字）
+                const samples = words.slice(0, 5);
+                previewSample.innerHTML = '<h4>單字樣本：</h4>';
+                samples.forEach(word => {
+                    previewSample.innerHTML += `
+                        <div class="word-sample">
+                            <strong>${word.word}</strong> ${word.phonetic} (${word.part_of_speech})
+                            <br>中文: ${word.chinese}
+                            <br>等級: ${word.level}
+                            <br>例句: ${word.toeic_example.sentence}
+                            <br>常用詞句: ${word.common_phrases.map(p => p.phrase).join(', ')}
+                        </div>
+                    `;
+                });
+            }
+            
+            // 更新統計
+            async function updateStatistics() {
+                await wordDB.init();
+                const stats = await wordDB.getStatistics();
+                
+                const totalElement = document.getElementById('total-words');
+                if (totalElement) {
+                    totalElement.textContent = stats.total;
+                }
+                
+                const levelStatsElement = document.getElementById('level-stats');
+                if (levelStatsElement) {
+                    levelStatsElement.innerHTML = '';
+                    
+                    for (const [level, count] of Object.entries(stats.byLevel)) {
+                        const statDiv = document.createElement('div');
+                        statDiv.innerHTML = `<strong>${level}:</strong> ${count} 個`;
+                        levelStatsElement.appendChild(statDiv);
+                    }
+                }
+            }
+            
+            // 匯出按鈕
+            document.getElementById('export-btn').addEventListener('click', async () => {
+                const jsonData = await wordDB.exportToJSON();
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `toeic_words_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            
+            // 匯入按鈕
+            const importBtn = document.getElementById('import-btn');
+            const jsonFileInput = document.getElementById('json-file-input');
+            
+            importBtn.addEventListener('click', () => {
+                jsonFileInput.click();
+            });
+            
+            jsonFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const text = await file.text();
+                    const result = await wordDB.importFromJSON(text);
+                    
+                    if (result.success) {
+                        alert(`匯入成功！\n新增: ${result.added.length}\n重複: ${result.duplicates.length}`);
+                        await updateStatistics();
+                    } else {
+                        alert(`匯入失敗: ${result.error}`);
+                    }
+                }
+            });
+            
+            // 清空按鈕
+            document.getElementById('clear-btn').addEventListener('click', async () => {
+                if (confirm('確定要清空所有資料嗎？此操作無法復原！')) {
+                    await wordDB.clearDatabase();
+                    await updateStatistics();
+                    alert('資料庫已清空');
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+        
+        .upload-area:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        
+        .upload-area.drag-over {
+            border-color: #28a745;
+            background-color: #e8f5e9;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-label {
+            display: block;
+            cursor: pointer;
+        }
+        
+        .process-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .process-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .preview-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .word-sample {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .sample-area {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</body>
+</html>

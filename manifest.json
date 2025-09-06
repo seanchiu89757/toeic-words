@@ -1,0 +1,40 @@
+{
+  "name": "多益單字學習系統",
+  "short_name": "TOEIC單字",
+  "description": "多益單字學習系統 - 支援語音朗讀、等級調整、離線使用",
+  "start_url": "/index-mobile.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4285f4",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "books"],
+  "lang": "zh-TW",
+  "dir": "ltr",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "開始學習",
+      "url": "/learn.html",
+      "description": "直接進入學習頁面"
+    },
+    {
+      "name": "管理單字",
+      "url": "/admin.html",
+      "description": "管理單字資料庫"
+    }
+  ]
+}

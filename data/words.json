@@ -1,0 +1,112 @@
+{
+  "version": "1.0",
+  "exportDate": "2024-01-01T00:00:00.000Z",
+  "totalWords": 5,
+  "words": [
+    {
+      "word": "meeting",
+      "level": "300-500",
+      "phonetic": "/ˈmiːtɪŋ/",
+      "part_of_speech": "noun",
+      "chinese": "會議",
+      "common_phrases": [
+        {
+          "phrase": "attend a meeting",
+          "chinese": "參加會議"
+        },
+        {
+          "phrase": "schedule a meeting",
+          "chinese": "安排會議"
+        }
+      ],
+      "toeic_example": {
+        "sentence": "The weekly meeting will be held in the conference room.",
+        "chinese": "每週會議將在會議室舉行。"
+      }
+    },
+    {
+      "word": "customer",
+      "level": "300-500",
+      "phonetic": "/ˈkʌstəmər/",
+      "part_of_speech": "noun",
+      "chinese": "客戶、顧客",
+      "common_phrases": [
+        {
+          "phrase": "customer service",
+          "chinese": "客戶服務"
+        },
+        {
+          "phrase": "customer satisfaction",
+          "chinese": "客戶滿意度"
+        }
+      ],
+      "toeic_example": {
+        "sentence": "Our company values customer feedback very highly.",
+        "chinese": "我們公司非常重視客戶反饋。"
+      }
+    },
+    {
+      "word": "schedule",
+      "level": "300-500",
+      "phonetic": "/ˈskedʒuːl/",
+      "part_of_speech": "noun/verb",
+      "chinese": "時間表、安排",
+      "common_phrases": [
+        {
+          "phrase": "on schedule",
+          "chinese": "按計劃"
+        },
+        {
+          "phrase": "behind schedule",
+          "chinese": "進度落後"
+        }
+      ],
+      "toeic_example": {
+        "sentence": "Please check the schedule for next week's training sessions.",
+        "chinese": "請查看下週培訓課程的時間表。"
+      }
+    },
+    {
+      "word": "department",
+      "level": "300-500",
+      "phonetic": "/dɪˈpɑːrtmənt/",
+      "part_of_speech": "noun",
+      "chinese": "部門",
+      "common_phrases": [
+        {
+          "phrase": "sales department",
+          "chinese": "銷售部門"
+        },
+        {
+          "phrase": "HR department",
+          "chinese": "人力資源部門"
+        }
+      ],
+      "toeic_example": {
+        "sentence": "Each department must submit their budget proposal by Friday.",
+        "chinese": "每個部門必須在星期五前提交預算提案。"
+      }
+    },
+    {
+      "word": "project",
+      "level": "300-500",
+      "phonetic": "/ˈprɑːdʒekt/",
+      "part_of_speech": "noun",
+      "chinese": "專案、項目",
+      "common_phrases": [
+        {
+          "phrase": "project manager",
+          "chinese": "專案經理"
+        },
+        {
+          "phrase": "complete a project",
+          "chinese": "完成專案"
+        }
+      ],
+      "toeic_example": {
+        "sentence": "The new project will require additional resources.",
+        "chinese": "新專案將需要額外的資源。"
+      }
+    }
+  ]
+}

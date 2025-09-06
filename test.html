@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>測試頁面</title>
+</head>
+<body>
+    <h1>API Key 測試</h1>
+    <input type="password" id="api-key" placeholder="輸入API Key">
+    <button id="test-btn">測試</button>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('test-btn').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key').value;
+            document.getElementById('result').textContent = '你輸入了: ' + (apiKey ? apiKey.substring(0, 10) + '...' : '空值');
+        });
+    </script>
+</body>
+</html>

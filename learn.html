@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>多益單字學習系統 - 語音版</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .speech-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .speech-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .speak-word-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .speak-word-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .speak-sentence-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .speak-sentence-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+        }
+        
+        .speak-phrase-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .stop-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .stop-btn:hover {
+            background: #c0392b;
+        }
+        
+        .speech-settings {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .speed-slider {
+            flex: 1;
+        }
+        
+        .auto-play-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .voice-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            margin-left: 5px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .speaking {
+            animation: speaking 2s infinite ease-in-out;
+        }
+        
+        @keyframes speaking {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); }
+        }
+        
+        .phrase-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+        
+        .pronunciation-guide {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .mode-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stats p {
+            margin: 0;
+        }
+        
+        /* 等級調整相關樣式 */
+        .word-level-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .word-level-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* 等級顏色 */
+        .level-300以下 { background: #e8f5e9; color: #2e7d32; }
+        .level-300-500 { background: #fff3e0; color: #ef6c00; }
+        .level-500-600 { background: #fce4ec; color: #c2185b; }
+        .level-600-700 { background: #e8eaf6; color: #5e35b1; }
+        .level-700-800 { background: #e1f5fe; color: #0277bd; }
+        .level-800-900 { background: #fce4ec; color: #ad1457; }
+        .level-900以上 { background: #f3e5f5; color: #6a1b9a; }
+        
+        .user-adjusted::after {
+            content: " 🔧";
+            font-size: 12px;
+        }
+        
+        .adjust-level-btn, .quick-adjust-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        .adjust-level-btn:hover, .quick-adjust-btn:hover {
+            background: #f0f0f0;
+            transform: scale(1.1);
+        }
+        
+        /* 等級調整對話框 */
+        .level-adjust-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .level-adjust-dialog {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .level-adjust-dialog h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+        }
+        
+        .adjust-form-group {
+            margin: 15px 0;
+        }
+        
+        .adjust-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .adjust-form-group select,
+        .adjust-form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .adjust-form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .level-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .adjust-dialog-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .adjust-dialog-buttons button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-confirm {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-reset {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .adjust-dialog-buttons button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>多益單字學習系統 
+                <span id="voice-status" class="voice-indicator" style="display: none;"></span>
+            </h1>
+            <div class="level-selector">
+                <label for="level">選擇程度：</label>
+                <select id="level">
+                    <option value="300以下">300分以下</option>
+                    <option value="300-500" selected>300-500分</option>
+                    <option value="500-600">500-600分</option>
+                    <option value="600-700">600-700分</option>
+                    <option value="700-800">700-800分</option>
+                    <option value="800-900">800-900分</option>
+                    <option value="900以上">900分以上</option>
+                </select>
+                <button id="load-level-btn" class="load-btn">載入</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 語音設定區 -->
+            <div class="speech-settings">
+                <h3>🔊 語音設定</h3>
+                <div class="speed-control">
+                    <label>朗讀速度：</label>
+                    <input type="range" id="speed-slider" class="speed-slider" 
+                           min="0.5" max="1.5" step="0.1" value="0.9">
+                    <span id="speed-value">0.9x</span>
+                </div>
+                <div class="auto-play-toggle">
+                    <input type="checkbox" id="auto-play">
+                    <label for="auto-play">自動朗讀新單字</label>
+                </div>
+                <div class="animation-toggle" style="margin-top: 10px;">
+                    <input type="checkbox" id="enable-animation" checked>
+                    <label for="enable-animation">啟用朗讀動畫效果</label>
+                </div>
+                <div class="voice-selector" style="margin-top: 10px;">
+                    <label>語音選擇：</label>
+                    <select id="voice-select" style="max-width: 300px;">
+                        <option value="">系統預設</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="word-card" class="word-card">
+                <div class="word-header">
+                    <h2 id="word">Loading...</h2>
+                    <div class="speech-controls">
+                        <button id="speak-word-btn" class="speech-btn speak-word-btn">
+                            🔊 念單字
+                        </button>
+                        <button id="speak-all-btn" class="speech-btn speak-sentence-btn">
+                            📢 完整朗讀
+                        </button>
+                        <button id="stop-btn" class="speech-btn stop-btn" style="display: none;">
+                            ⏹ 停止
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="learning-hint" class="learning-hint">
+                    💡 先想想這個單字的意思，然後點「顯示答案」查看詳解
+                </div>
+                
+                <div class="pronunciation-guide" id="pronunciation-guide" style="display: none;">
+                    🎯 發音提示：仔細聆聽母音和重音位置
+                </div>
+                
+                <div class="word-level-container" style="margin: 10px 0;">
+                    <span id="word-level" class="word-level-badge"></span>
+                    <button id="adjust-level-btn" class="adjust-level-btn" title="調整等級">✏️</button>
+                    <button id="quick-up-btn" class="quick-adjust-btn" title="提升一級">⬆️</button>
+                    <button id="quick-down-btn" class="quick-adjust-btn" title="降低一級">⬇️</button>
+                </div>
+                
+                <p id="phonetic" class="phonetic"></p>
+                <p id="part-of-speech" class="part-of-speech"></p>
+                <p id="chinese" class="chinese"></p>
+                
+                <div class="phrases" id="phrases-section" style="display: none;">
+                    <h3>常用詞句</h3>
+                    <div id="phrases-list"></div>
+                </div>
+                
+                <div class="example">
+                    <h3>多益例句
+                        <button id="speak-sentence-btn" class="speech-btn speak-phrase-btn">
+                            🔊 念例句
+                        </button>
+                    </h3>
+                    <p id="example-sentence"></p>
+                    <p id="example-chinese" class="chinese"></p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn">上一個</button>
+                <button id="show-answer-btn">顯示答案</button>
+                <button id="next-btn">下一個</button>
+                <button id="mark-btn">標記</button>
+                <button id="review-btn">複習 (<span id="marked-count">0</span>)</button>
+            </div>
+
+            <div class="mode-controls">
+                <button id="toggle-mode-btn" class="mode-btn">🎲 隨機模式</button>
+                <button id="reshuffle-btn" class="mode-btn">🔄 重新洗牌</button>
+            </div>
+
+            <div class="stats">
+                <p>今日學習：<span id="today-count">0</span> 個</p>
+                <p>總進度：<span id="progress">0/0</span></p>
+                <p>等級進度：<span id="level-progress">0%</span></p>
+                <p>已學習：<span id="learned-count">0</span></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- 等級調整對話框 -->
+    <div id="level-adjust-modal" class="level-adjust-modal">
+        <div class="level-adjust-dialog">
+            <h3>調整單字等級</h3>
+            
+            <div class="level-info">
+                <div>單字：<strong id="adjust-word-text"></strong></div>
+                <div>原始等級：<span id="adjust-original-level"></span></div>
+                <div>當前等級：<span id="adjust-current-level"></span></div>
+            </div>
+            
+            <div class="adjust-form-group">
+                <label for="adjust-new-level">調整為：</label>
+                <select id="adjust-new-level">
+                    <option value="300以下">300以下 - 最基礎單字</option>
+                    <option value="300-500">300-500 - 基礎商業單字</option>
+                    <option value="500-600">500-600 - 中級商業單字</option>
+                    <option value="600-700">600-700 - 進階商業單字</option>
+                    <option value="700-800">700-800 - 專業商業單字</option>
+                    <option value="800-900">800-900 - 高級專業單字</option>
+                    <option value="900以上">900以上 - 最高級單字</option>
+                </select>
+            </div>
+            
+            <div class="adjust-form-group">
+                <label for="adjust-reason">調整原因（選填）：</label>
+                <textarea id="adjust-reason" placeholder="例如：這個字比預期困難..."></textarea>
+            </div>
+            
+            <div class="adjust-dialog-buttons">
+                <button id="adjust-reset-btn" class="btn-reset">恢復原始</button>
+                <button id="adjust-cancel-btn" class="btn-cancel">取消</button>
+                <button id="adjust-confirm-btn" class="btn-confirm">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // 語音功能初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查語音支援
+            if (!speechService.isSupported) {
+                document.querySelector('.speech-settings').innerHTML = 
+                    '<p style="color: red;">⚠️ 您的瀏覽器不支援語音功能</p>';
+                return;
+            }
+            
+            // 載入可用語音
+            setTimeout(() => {
+                const voices = speechService.getAvailableVoices();
+                const voiceSelect = document.getElementById('voice-select');
+                
+                voices.forEach(voice => {
+                    if (voice.lang.startsWith('en')) {
+                        const option = document.createElement('option');
+                        option.value = voice.name;
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        voiceSelect.appendChild(option);
+                    }
+                });
+            }, 1000);
+            
+            // 語音選擇變更
+            document.getElementById('voice-select').addEventListener('change', (e) => {
+                if (e.target.value) {
+                    speechService.setVoice(e.target.value);
+                }
+            });
+            
+            // 速度控制
+            const speedSlider = document.getElementById('speed-slider');
+            const speedValue = document.getElementById('speed-value');
+            
+            speedSlider.addEventListener('input', (e) => {
+                const speed = parseFloat(e.target.value);
+                speedValue.textContent = `${speed}x`;
+                speechService.updateSettings({ rate: speed });
+            });
+            
+            // 念單字按鈕
+            document.getElementById('speak-word-btn').addEventListener('click', async () => {
+                const word = document.getElementById('word').textContent;
+                if (word && word !== 'Loading...') {
+                    showSpeakingStatus(true);
+                    // 使用當前速度設定
+                    const currentRate = parseFloat(document.getElementById('speed-slider').value);
+                    await speechService.speak(word, { rate: currentRate * 0.8 }); // 單字稍慢
+                    showSpeakingStatus(false);
+                }
+            });
+            
+            // 完整朗讀按鈕
+            document.getElementById('speak-all-btn').addEventListener('click', async () => {
+                const wordData = getCurrentWordData();
+                if (wordData) {
+                    showSpeakingStatus(true);
+                    const currentRate = parseFloat(document.getElementById('speed-slider').value);
+                    // 先念單字（慢速）
+                    await speechService.speak(wordData.word, { rate: currentRate * 0.7 });
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    // 再念一次（正常速）
+                    await speechService.speak(wordData.word, { rate: currentRate });
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    // 念例句
+                    if (wordData.toeic_example?.sentence) {
+                        await speechService.speak(wordData.toeic_example.sentence, { rate: currentRate });
+                    }
+                    showSpeakingStatus(false);
+                }
+            });
+            
+            // 念例句按鈕
+            document.getElementById('speak-sentence-btn').addEventListener('click', async () => {
+                const sentence = document.getElementById('example-sentence').textContent;
+                if (sentence) {
+                    showSpeakingStatus(true);
+                    const currentRate = parseFloat(document.getElementById('speed-slider').value);
+                    await speechService.speak(sentence, { rate: currentRate });
+                    showSpeakingStatus(false);
+                }
+            });
+            
+            // 停止按鈕
+            document.getElementById('stop-btn').addEventListener('click', () => {
+                speechService.stop();
+                showSpeakingStatus(false);
+            });
+            
+            // 自動朗讀
+            const autoPlay = document.getElementById('auto-play');
+            
+            // 監聽單字變更事件（需要在 app.js 中觸發）
+            document.addEventListener('wordChanged', (event) => {
+                if (autoPlay.checked && event.detail) {
+                    setTimeout(() => {
+                        const currentRate = parseFloat(document.getElementById('speed-slider').value);
+                        speechService.speak(event.detail.word, { rate: currentRate * 0.8 });
+                    }, 500);
+                }
+            });
+            
+            // 顯示朗讀狀態
+            function showSpeakingStatus(speaking) {
+                const indicator = document.getElementById('voice-status');
+                const stopBtn = document.getElementById('stop-btn');
+                const enableAnimation = document.getElementById('enable-animation').checked;
+                
+                if (speaking) {
+                    indicator.style.display = 'inline-block';
+                    stopBtn.style.display = 'inline-flex';
+                    // 只有在啟用動畫時才添加 speaking class
+                    if (enableAnimation) {
+                        document.getElementById('word-card').classList.add('speaking');
+                    }
+                } else {
+                    indicator.style.display = 'none';
+                    stopBtn.style.display = 'none';
+                    document.getElementById('word-card').classList.remove('speaking');
+                }
+            }
+            
+            // 獲取當前單字資料
+            function getCurrentWordData() {
+                // 這個函數需要從 app.js 獲取資料
+                // 或者直接從頁面元素構建
+                return {
+                    word: document.getElementById('word').textContent,
+                    chinese: document.getElementById('chinese').textContent,
+                    toeic_example: {
+                        sentence: document.getElementById('example-sentence').textContent,
+                        chinese: document.getElementById('example-chinese').textContent
+                    }
+                };
+            }
+            
+            // 為常用詞句添加朗讀按鈕
+            document.addEventListener('phrasesLoaded', (event) => {
+                const phrasesList = document.getElementById('common-phrases-list');
+                if (phrasesList && event.detail) {
+                    phrasesList.innerHTML = '';
+                    event.detail.forEach((phrase, index) => {
+                        const phraseDiv = document.createElement('div');
+                        phraseDiv.className = 'phrase-item';
+                        phraseDiv.innerHTML = `
+                            <span>${phrase.phrase} - ${phrase.chinese}</span>
+                            <button class="speech-btn speak-phrase-btn" 
+                                    onclick="speechService.speak('${phrase.phrase}', {rate: 0.85})">
+                                🔊
+                            </button>
+                        `;
+                        phrasesList.appendChild(phraseDiv);
+                    });
+                }
+            });
+        });
+        
+        // 等級調整功能
+        document.addEventListener('DOMContentLoaded', () => {
+            const levels = ['300以下', '300-500', '500-600', '600-700', '700-800', '800-900', '900以上'];
+            let currentWordData = null;
+            
+            // 調整等級按鈕
+            document.getElementById('adjust-level-btn').addEventListener('click', () => {
+                showLevelAdjustDialog();
+            });
+            
+            // 快速上升按鈕
+            document.getElementById('quick-up-btn').addEventListener('click', () => {
+                quickAdjustLevel('up');
+            });
+            
+            // 快速下降按鈕
+            document.getElementById('quick-down-btn').addEventListener('click', () => {
+                quickAdjustLevel('down');
+            });
+            
+            // 顯示等級調整對話框
+            function showLevelAdjustDialog() {
+                const word = document.getElementById('word').textContent;
+                if (!word || word === 'Loading...') return;
+                
+                // 從資料庫獲取完整單字資料
+                wordDB.findWordByText(word).then(wordData => {
+                    if (!wordData) return;
+                    
+                    currentWordData = wordData;
+                    
+                    // 填充對話框資訊
+                    document.getElementById('adjust-word-text').textContent = wordData.word;
+                    document.getElementById('adjust-original-level').textContent = wordData.original_level || wordData.level;
+                    document.getElementById('adjust-current-level').textContent = wordData.level;
+                    document.getElementById('adjust-new-level').value = wordData.level;
+                    document.getElementById('adjust-reason').value = '';
+                    
+                    // 顯示對話框
+                    const modal = document.getElementById('level-adjust-modal');
+                    modal.style.display = 'flex';
+                });
+            }
+            
+            // 快速調整等級
+            function quickAdjustLevel(direction) {
+                const word = document.getElementById('word').textContent;
+                if (!word || word === 'Loading...') return;
+                
+                wordDB.findWordByText(word).then(wordData => {
+                    if (!wordData) return;
+                    
+                    const currentIndex = levels.indexOf(wordData.level);
+                    let newIndex;
+                    
+                    if (direction === 'up' && currentIndex < levels.length - 1) {
+                        newIndex = currentIndex + 1;
+                    } else if (direction === 'down' && currentIndex > 0) {
+                        newIndex = currentIndex - 1;
+                    } else {
+                        return; // 已經是最高或最低等級
+                    }
+                    
+                    const newLevel = levels[newIndex];
+                    const reason = direction === 'up' ? '快速提升等級' : '快速降低等級';
+                    
+                    // 更新資料庫
+                    wordDB.updateWordLevel(wordData.id, newLevel, reason).then(updatedWord => {
+                        // 更新顯示
+                        updateLevelDisplay(updatedWord);
+                        
+                        // 顯示提示
+                        showLevelChangeNotification(wordData.level, newLevel);
+                    });
+                });
+            }
+            
+            // 確認調整
+            document.getElementById('adjust-confirm-btn').addEventListener('click', () => {
+                if (!currentWordData) return;
+                
+                const newLevel = document.getElementById('adjust-new-level').value;
+                const reason = document.getElementById('adjust-reason').value;
+                
+                if (newLevel === currentWordData.level) {
+                    closeLevelAdjustDialog();
+                    return;
+                }
+                
+                // 更新資料庫
+                wordDB.updateWordLevel(currentWordData.id, newLevel, reason).then(updatedWord => {
+                    // 更新顯示
+                    updateLevelDisplay(updatedWord);
+                    
+                    // 顯示提示
+                    showLevelChangeNotification(currentWordData.level, newLevel);
+                    
+                    // 關閉對話框
+                    closeLevelAdjustDialog();
+                });
+            });
+            
+            // 恢復原始等級
+            document.getElementById('adjust-reset-btn').addEventListener('click', () => {
+                if (!currentWordData) return;
+                
+                wordDB.resetWordLevel(currentWordData.id).then(updatedWord => {
+                    // 更新顯示
+                    updateLevelDisplay(updatedWord);
+                    
+                    // 顯示提示
+                    showLevelChangeNotification(currentWordData.level, updatedWord.level);
+                    
+                    // 關閉對話框
+                    closeLevelAdjustDialog();
+                });
+            });
+            
+            // 取消調整
+            document.getElementById('adjust-cancel-btn').addEventListener('click', () => {
+                closeLevelAdjustDialog();
+            });
+            
+            // 關閉對話框
+            function closeLevelAdjustDialog() {
+                const modal = document.getElementById('level-adjust-modal');
+                modal.style.display = 'none';
+                currentWordData = null;
+            }
+            
+            // 更新等級顯示
+            function updateLevelDisplay(wordData) {
+                const levelBadge = document.getElementById('word-level');
+                if (levelBadge) {
+                    levelBadge.textContent = wordData.level;
+                    levelBadge.className = `word-level-badge level-${wordData.level.replace('/', '-')}`;
+                    
+                    if (wordData.user_adjusted) {
+                        levelBadge.classList.add('user-adjusted');
+                    }
+                }
+                
+                // 更新記憶體中的資料
+                if (window.app && window.app.currentWords) {
+                    const index = window.app.currentWords.findIndex(w => w.id === wordData.id);
+                    if (index !== -1) {
+                        window.app.currentWords[index] = wordData;
+                    }
+                }
+            }
+            
+            // 顯示等級變更通知
+            function showLevelChangeNotification(fromLevel, toLevel) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #4caf50;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    z-index: 2000;
+                    animation: slideIn 0.3s;
+                `;
+                notification.textContent = `等級已調整：${fromLevel} → ${toLevel}`;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+            
+            // 點擊外部關閉對話框
+            document.getElementById('level-adjust-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    closeLevelAdjustDialog();
+                }
+            });
+        });
+        
+        // 動畫樣式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

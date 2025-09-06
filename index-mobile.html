@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4285f4">
+    <link rel="manifest" href="manifest.json">
+    <title>多益單字學習系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .menu-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.3s;
+            min-height: 80px;
+        }
+        
+        .menu-item:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-icon {
+            font-size: 30px;
+        }
+        
+        .menu-item.admin {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .menu-item.learn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .menu-item.review {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .features {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .features h3 {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            color: #777;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .feature-list li {
+            margin-left: 20px;
+            list-style: none;
+            position: relative;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: -20px;
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .stats-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .menu-item {
+                font-size: 16px;
+                min-height: 70px;
+            }
+        }
+        
+        /* PWA 安裝提示 */
+        .install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .install-prompt button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>📚 多益單字學習系統</h1>
+            
+            <div class="menu-grid">
+                <a href="learn.html" class="menu-item learn">
+                    <span class="menu-icon">📖</span>
+                    <span>開始學習</span>
+                </a>
+                
+                <a href="admin.html" class="menu-item admin">
+                    <span class="menu-icon">⚙️</span>
+                    <span>管理單字</span>
+                </a>
+                
+                <a href="#" class="menu-item review" onclick="showStats(); return false;">
+                    <span class="menu-icon">📊</span>
+                    <span>學習統計</span>
+                </a>
+            </div>
+            
+            <div class="stats-preview" id="stats" style="display: none;">
+                <div class="stat-box">
+                    <div class="stat-number" id="total-words">0</div>
+                    <div class="stat-label">總單字數</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="learned-today">0</div>
+                    <div class="stat-label">今日學習</div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <h3>系統特色</h3>
+                <ul class="feature-list">
+                    <li>支援離線使用</li>
+                    <li>語音朗讀功能</li>
+                    <li>等級自訂調整</li>
+                    <li>常用詞句學習</li>
+                    <li>進度自動儲存</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PWA 安裝提示 -->
+    <div class="install-prompt" id="install-prompt">
+        <p>將應用程式安裝到手機桌面？</p>
+        <button onclick="installPWA()">安裝</button>
+        <button onclick="dismissInstall()">稍後</button>
+    </div>
+    
+    <script>
+        // 檢查是否可以安裝 PWA
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-prompt').style.display = 'block';
+        });
+        
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('用戶安裝了 PWA');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('install-prompt').style.display = 'none';
+                });
+            }
+        }
+        
+        function dismissInstall() {
+            document.getElementById('install-prompt').style.display = 'none';
+        }
+        
+        // 顯示統計
+        async function showStats() {
+            const statsDiv = document.getElementById('stats');
+            if (statsDiv.style.display === 'none') {
+                // 載入統計資料
+                if (typeof wordDB !== 'undefined') {
+                    await wordDB.init();
+                    const stats = await wordDB.getStatistics();
+                    document.getElementById('total-words').textContent = stats.total;
+                }
+                statsDiv.style.display = 'grid';
+            } else {
+                statsDiv.style.display = 'none';
+            }
+        }
+        
+        // 檢查是否為 PWA 模式
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('運行在 PWA 模式');
+        }
+        
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+    <script src="js/database.js"></script>
+</body>
+</html>
